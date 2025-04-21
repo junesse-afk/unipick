@@ -1,0 +1,54 @@
+@charset "UTF-8";
+.item-regi-name {
+    font-size: 1.2em;
+    width: 200px;
+    font-weight: bold;
+    
+}
+.buyerOrdInfo {
+    padding: 10px;
+}
+.section {
+    border-bottom: 1px solid #ddd;
+    padding: 0.75rem 1.25rem;
+/*     display: flex; */
+/*     align-items: center; */
+}
+.section:last-child {
+    border-bottom: none;
+}
+.sel{
+	color: #f2a900;
+}
+.title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.input-box {
+    padding: 5px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 4px;
+    height: 40px;
+    width: 950px;
+}
+.label {
+	color: #858796;;
+	padding-top: 6px;
+	font-size: 18px;
+}
+.button-container {
+     display: flex;
+     justify-content: flex-end;
+     margin-top: 10px;
+}
+.button {
+    padding: 10px;
+    background-color: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 10px;
+}

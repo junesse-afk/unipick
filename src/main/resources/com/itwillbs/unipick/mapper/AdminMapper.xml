@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itwillbs.unipick.mapper.AdminMapper">
+	<!-- 관리자 정보 조회 -->
+	<select id="adminInfo" parameterType="map">
+		SELECT *
+		  FROM admins
+		 WHERE adm_id = #{admId}
+		 <if test="rememberMe != null">
+		   AND adm_pw = #{admPw}
+		 </if>
+	</select>
+	
+	<!-- 관리자 정보 수정 -->
+	<update id="adminEdit" parameterType="map">
+		UPDATE admins
+		   SET adm_pw = #{admPw}
+		 WHERE adm_id = #{admId}
+	</update>
+	
+	<!--   	코드 등록 -->
+  	<insert id="registerDB" parameterType="map">
+	  	INSERT INTO common_code (
+			  	com_cd, 
+			  	com_nm,
+			  	com_yn
+		) VALUES (
+		 		#{com_cd}, 
+		 		#{com_nm}, 
+		 		#{com_yn}
+			 	)
+  	</insert>
+  	
+	<!--   	코드 수정 -->
+  	<update id="updateDB" parameterType="map">
+	  	UPDATE common_code
+		   SET com_nm = #{com_nm},
+			   com_yn = #{com_yn}
+		 WHERE com_cd = #{com_cd}
+  	</update>
+  	
+	<!--   	코드 조회 -->
+  	<select id="codeList" parameterType="map">
+	  	SELECT COUNT(*) OVER () - ROW_NUMBER() OVER (ORDER BY com_nm DESC) + 1 AS com_nb,
+	  			   com_cd, 
+	  			   com_nm, 
+	  			   com_yn
+	  	  FROM common_code
+	  	  where 1 = 1
+	  	  <choose>
+		   	<when test="com_cd != null and !com_cd.equals('')">
+		   		AND com_cd LIKE CONCAT(#{com_cd}, '%')
+		   	</when>
+		   	<when test="com_nm != null and !com_nm.equals('')">
+		   		AND com_nm LIKE CONCAT(#{com_nm}, '%')
+		   	</when>
+	     </choose>
+  	</select>
+  	
+  	<!-- 코드 삭제 -->
+  	<delete id="deleteDB" parameterType="map">
+	  	DELETE FROM common_code 
+	  	 WHERE com_cd = #{com_cd}
+  	</delete>
+	
+	<!-- 상세 코드 조회 -->
+  	<select id="detailCodeList" parameterType="map">
+	  	SELECT COUNT(*) OVER () - ROW_NUMBER() OVER (ORDER BY d.cod_cd DESC) + 1 AS cod_nb,
+	    	   c.com_cd,
+	    	   c.com_nm,
+	    	   d.cod_cd,
+	    	   d.cod_nm,
+	    	   d.cod_yn,
+	    	   d.cod_pr,
+	    	   d.cod_so
+		  FROM common_code c
+		  JOIN common_detailcode d ON c.com_cd = d.com_cd
+		 where 1 = 1
+		 <choose>
+		   	<when test="com_cd != null and !com_cd.equals('')">
+		   		AND c.com_cd LIKE CONCAT(#{com_cd}, '%')
+		   	</when>
+		   	<when test="cod_cd != null and !cod_cd.equals('')">
+		   		AND d.cod_cd LIKE CONCAT(#{cod_cd}, '%')
+		   	</when>
+		   	<when test="cod_nm != null and !cod_nm.equals('')">
+		   		AND d.cod_nm LIKE CONCAT(#{cod_nm}, '%')
+		   	</when>
+	     </choose>
+  	</select>
+  	
+  	<!-- 상세 코드 등록 -->
+  	<insert id="detailcoderegister" parameterType="map">
+  		INSERT into common_detailcode(
+  			   com_cd,
+  			   cod_cd,
+  			   cod_nm,
+  			   cod_yn,
+  			   cod_so
+  			   )
+  		VALUES(#{com_cd},
+			   #{cod_cd},
+			   #{cod_nm},
+			   #{cod_yn},
+			   #{cod_so})
+  	</insert>
+  	
+	<!--   	상세 코드 수정 -->
+  	<update id="updateDBcodeDetail" parameterType="map">
+	  	UPDATE common_detailcode
+		   SET cod_cd = #{cod_cd},
+		   	   cod_nm = #{cod_nm},
+		   	   cod_so = #{cod_so},
+			   cod_yn = #{cod_yn}
+		 WHERE cod_cd = #{beforecod_cd}
+  	</update>
+  	
+	<!--   	상세 코드 삭제 -->
+  	<delete id="updateDBcodeDelete" parameterType="map">
+	  	DELETE FROM common_detailcode
+	  	 WHERE cod_cd = #{cod_cd}
+  	</delete>
+  	
+	<!--   계층 코드 등록 -->
+  	<insert id="insertLvCode" parameterType="map">
+	  	INSERT INTO level (
+			  	lev_cd, 
+			  	lev_nm,
+			  	lev_ul,
+			  	lev_so,
+			  	lev_yn
+		) VALUES (
+		 		#{lev_cd}, 
+		 		#{lev_nm},
+		 		#{lev_ul},
+		 		#{lev_so}, 
+		 		#{lev_yn}
+			 	)
+  	</insert>
+  	
+	<!--   	계층 코드 수정 -->
+  	<update id="updateLvCode" parameterType="map">
+	  	UPDATE level
+		   SET lev_nm = #{lev_nm},
+		   	   lev_so = #{lev_so},
+		   	   lev_ul = #{lev_ul},
+			   lev_yn = #{lev_yn}
+		 WHERE lev_cd = #{lev_cd}
+  	</update>
+  	
+	<!--   	계층 코드 조회 -->
+  	<select id="selectLvCode" parameterType="map">
+	  	SELECT COUNT(*) OVER () - ROW_NUMBER() OVER (ORDER BY lev_cd DESC) + 1 AS lev_nb,
+	  			   lev_cd, 
+	  			   lev_nm,
+	  			   IFNULL(lev_ul,'') as lev_ul,
+	  			   lev_so,
+	  			   lev_yn
+	  	  FROM level
+	  	  where 1 = 1
+	  	  <choose>
+		   	<when test="lev_cd != null and !lev_cd.equals('')">
+		   		AND lev_cd LIKE CONCAT(#{lev_cd}, '%')
+		   	</when>
+		   	<when test="lev_nm != null and !lev_nm.equals('')">
+		   		AND lev_nm LIKE CONCAT(#{lev_nm}, '%')
+		   	</when>
+	     </choose>
+  	</select>
+  	
+	<!-- 계층 코드 삭제 -->
+  	<delete id="deleteLvCode" parameterType="map">
+	  	DELETE FROM level 
+	  	 WHERE lev_cd = #{lev_cd}
+  	</delete>
+  	
+  	<!-- 사이드 메뉴 -->
+  	<select id="sideMainMenuList">
+  		SELECT lev_cd,
+  			   lev_nm,
+  			   lev_ul,
+  			   lev_so,
+  			   lev_yn
+  		  FROM level
+  		 WHERE lev_cd LIKE CONCAT(#{menu}, '%')
+  		   AND CHAR_LENGTH(lev_cd) = 9
+  		   AND lev_yn = 'y'
+  		 ORDER BY lev_so
+  	</select>
+  	
+  	<select id="sideSubMenuList">
+  		SELECT lev_cd,
+  			   lev_nm,
+  			   lev_ul,
+  			   lev_so,
+  			   lev_yn
+  		  FROM level
+  		 WHERE lev_cd LIKE CONCAT(#{menu}, '%')
+  		   AND CHAR_LENGTH(lev_cd) = 11
+  		   AND lev_yn = 'y'
+  		 ORDER BY lev_so
+  	</select>
+  	
+<!--   	상품관리 조회-->
+	<select id="getPrdList" parameterType="map">
+	 SELECT p.prd_nm,
+	 		p.prd_cd,
+	 		s.sel_nm,
+	 		p.prd_op,
+	 		p.prd_sp,
+	 		cd.cod_nm AS prd_st
+	   FROM products p 
+	   JOIN sellers s
+	     ON p.sel_id = s.sel_id
+	   LEFT JOIN common_detailcode cd 
+		 ON p.prd_st = cd.cod_cd 
+	    AND cd.com_cd = 'PRD_REGISTERSTATUS'
+	  WHERE 1 = 1
+	 <choose>
+	   	<when test="prd_cd != null and !prd_cd.equals('')">
+	   		AND p.prd_cd LIKE CONCAT('%', #{prd_cd}, '%')
+	   	</when>
+	   	<when test="prd_nm != null and !prd_nm.equals('')">
+	   		AND p.prd_nm LIKE CONCAT('%', #{prd_nm}, '%')
+	   	</when>
+	   	<when test="store_nm != null and !store_nm.equals('')">
+	   		AND s.sel_nm LIKE CONCAT('%', #{store_nm}, '%')
+	   	</when>
+	   	<when test="store_st != null and !store_st.equals('')">
+	   		AND p.prd_st LIKE CONCAT('%', #{store_st}, '%')
+	   	</when>
+     </choose>
+     <if test="!adm_id.equals('admin')">
+        AND s.adm_id = #{adm_id}
+     </if>
+      LIMIT #{limit} OFFSET #{offset}
+	</select>
+	
+<!-- 	상품관리 페이징에 필요한 전채 갯수 조회 -->
+	<select id="getPrdTotalCount" parameterType="map" resultType="int">
+	 SELECT COUNT(*)
+	   FROM products p 
+	   JOIN sellers s
+	     ON p.sel_id = s.sel_id
+	   LEFT JOIN common_detailcode cd 
+		 ON p.prd_st = cd.cod_cd 
+	    AND cd.com_cd = 'PRD_REGISTERSTATUS'
+	  WHERE 1 = 1
+	 <choose>
+	   	<when test="prd_cd != null and !prd_cd.equals('')">
+	   		AND p.prd_cd LIKE CONCAT('%', #{prd_cd}, '%')
+	   	</when>
+	   	<when test="prd_nm != null and !prd_nm.equals('')">
+	   		AND p.prd_nm LIKE CONCAT('%', #{prd_nm}, '%')
+	   	</when>
+	   	<when test="store_nm != null and !store_nm.equals('')">
+	   		AND s.sel_nm LIKE CONCAT('%', #{store_nm}, '%')
+	   	</when>
+	   	<when test="store_st != null and !store_st.equals('')">
+	   		AND p.prd_st LIKE CONCAT('%', #{store_st}, '%')
+	   	</when>
+     </choose>
+     <if test="!adm_id.equals('admin')">
+        AND s.adm_id = #{adm_id}
+     </if>
+	</select>
+	
+<!-- 	상품 상세 관리 -->
+	<select id="getprdListDetail" parameterType="map">
+	 SELECT p.prd_cd, s.sel_nm, p.prd_nm, p.prd_op, p.prd_sp, 
+	 		p.prd_st, o.clr_nm, o.prd_qt, c.cod_nm 
+	   FROM products p 
+	   JOIN sellers s
+	     ON p.sel_id = s.sel_id
+      RIGHT JOIN options o
+         ON p.prd_cd = o.prd_cd
+	   JOIN common_detailcode c
+		 ON o.siz_nm = c.cod_cd 
+	  WHERE o.prd_cd = #{prd_cd};
+	</select>
+<!-- 	상품 상태 조회 -->
+	<select id="getCommonStatus" parameterType="map">
+	 SELECT cod_cd,
+		    cod_nm
+	   FROM common_detailcode
+	  WHERE com_cd = 'PRD_REGISTERSTATUS';
+	</select>
+	
+	<!-- 방문자 수 -->
+	<select id="visitCount" parameterType="map">
+		SELECT vis_dt, vis_ct
+		  FROM visit
+		 WHERE vis_dt = DATE(now());
+	</select>
+	
+<!-- 	상품 접수 상태변경 -->
+	<update id="updateStatus" parameterType="map">
+	  UPDATE products 
+		 SET prd_st = #{status}
+	   WHERE prd_cd = #{prdCd}
+	</update>
+	
+	<!-- 가입 리스트 -->
+	<select id="joinList">
+		SELECT buy_em,
+			   buy_nm,
+			   '구매자' AS buy_st,
+			   DATE_FORMAT(acc_at, '%Y-%m-%d %H:%i:%s') as buy_at
+		  FROM buyers
+		 WHERE acc_at >= NOW() - INTERVAL 7 DAY
+		 UNION
+		SELECT sel_id,
+			   sel_nm,
+			   '판매자' AS sel_st,
+			   DATE_FORMAT(sel_at, '%Y-%m-%d %H:%i:%s') as sel_at
+		  FROM sellers
+		 WHERE sel_at >= NOW() - INTERVAL 7 DAY
+		 ORDER BY buy_at DESC
+	</select>
+	
+	<!-- 신고내역 리스트 -->
+	<select id="reportList">
+		select rpt_id,
+			   rpr_id,
+			   rpd_id,
+			   rpt_tg,
+			   rpt_rs,
+			   rpt_dt,
+			   cod_cd,
+			   cod_nm
+		  FROM (SELECT rpt_id,
+					   CASE 
+					   	   WHEN rpt_tg = '판매자' THEN buy_em 
+					   	   ELSE sel_id 
+					   END AS rpr_id,
+					   CASE
+					   	   WHEN rpt_tg = '판매자' THEN sel_id
+					   	   ELSE buy_em
+					   END AS rpd_id,
+					   rpt_tg,
+					   rpt_rs,
+					   rpt_dt,
+					   cd.cod_cd,
+					   cd.cod_nm
+				  FROM report r
+				  JOIN common_detailcode cd ON r.rpt_st = cd.cod_cd) re
+		 WHERE 1 = 1
+		  <if test="rpt_id != null and !rpt_id.equals('')">
+		  	AND rpt_id = #{rpt_id}
+		  </if>
+		  <choose>
+		  	<when test="rpr_id != null and !rpr_id.equals('')">
+		  		AND rpr_id LIKE CONCAT(#{rpr_id}, '%') 
+		  	</when>
+		  	<when test="rpd_id != null and !rpd_id.equals('')">
+		  		AND rpd_id LIKE CONCAT(#{rpd_id}, '%')
+		  	</when>
+		  </choose>
+		  <if test="cod_cd != all and !cod_cd.equals('all')">
+		  	AND cod_cd = #{cod_cd}
+		  </if>
+		 ORDER BY rpt_dt DESC
+	</select>
+	
+<!-- 	판매자 회원 조회 -->
+	<select id="getSellerInfo" parameterType="map">
+	 SELECT sel_id, sel_nm, sel_mn, sel_cs
+	   FROM sellers
+	  WHERE 1 = 1
+	  <if test="!adm_id.equals('admin')">
+	  	AND adm_id = #{adm_id}
+	  </if>
+	   <choose>
+		   	<when test="sel_id != null and !sel_id.equals('')">
+		   		AND sel_id LIKE CONCAT(#{sel_id}, '%')
+		   	</when>
+		   	<when test="sel_nm != null and !sel_nm.equals('')">
+		   		AND sel_nm LIKE CONCAT(#{sel_nm}, '%')
+		   	</when>
+		   	<when test="sel_mn != null and !sel_mn.equals('')">
+		   		AND sel_mn LIKE CONCAT(#{sel_mn}, '%')
+		   	</when>
+	     </choose>;
+	</select>
+	
+<!-- 	판매자 회원 상세 조회 -->
+	<select id="getSellerInfoDeatil" parameterType="map">
+	 SELECT s.sel_id, s.sel_nm, s.sel_rn, s.sel_mn,
+		    s.sel_mp, s.sel_cs, s.sel_br, s.sel_ad, cd.cod_nm
+	   FROM sellers s
+	   JOIN common_detailcode cd
+	     ON s.sel_st = cd.cod_cd 
+	  WHERE sel_nm = #{sel_nm};
+	</select>
+	
+	<!-- 구매자 회원 조회 -->
+	<select id="getBuyerInfo" parameterType="map">
+		SELECT ROW_NUMBER() OVER (ORDER BY b.acc_at) AS rn,
+			   b.buy_em,
+			   b.buy_nm,
+			   b.buy_ad,
+			   b.buy_ph,
+			   b.buy_bd,
+			   IFNULL(b.buy_nn, '') as buy_nn,
+			   IFNULL(b.buy_gn, '') as buy_gn,
+			   b.buy_ht,
+			   b.buy_wt,
+			   b.buy_pc,
+			   b.acc_at,
+			   b.acc_ta,
+			   b.acc_pa,
+			   b.acc_ma,
+			   cd.cod_nm,
+			   IFNULL(r.cnt, 0) as cnt_rp
+		  FROM buyers b
+		  JOIN common_detailcode cd ON b.acc_st = cd.cod_cd
+		  LEFT JOIN (SELECT buy_em, count(*) AS cnt
+				  	   FROM report r
+                       JOIN common_detailcode cd ON r.rpt_st = cd.cod_cd
+					  WHERE cod_nm = '처리' AND rpt_tg = '구매자'
+				 	  GROUP BY buy_em) r ON b.buy_em = r.buy_em
+		 WHERE 1 = 1
+		  <choose>
+		   	<when test="buy_em != null and !buy_em.equals('')">
+		   		AND b.buy_em LIKE CONCAT(#{buy_em}, '%')
+		   	</when>
+		   	<when test="buy_nm != null and !buy_nm.equals('')">
+		   		AND b.buy_nm LIKE CONCAT(#{buy_nm}, '%')
+		   	</when>
+		   	<when test="buy_nn != null and !buy_nn.equals('')">
+		   		AND b.buy_nn LIKE CONCAT(#{buy_nn}, '%')
+		   	</when>
+	     </choose>
+	     <if test="acc_st != null and !acc_st.equals('')">
+	     	AND b.acc_st = #{acc_st}
+	     </if>
+	     <if test="cod_cd != all and !cod_cd.equals('all')">
+	     	AND cod_cd = #{cod_cd}
+	     </if>
+		 ORDER BY b.acc_at DESC
+	</select>
+	
+	<!-- 구매자 상태 -->
+	<select id="getStatus" parameterType="String">
+		SELECT cod_cd, cod_nm
+		  FROM common_detailcode
+		 WHERE cod_yn = 'y'
+		   AND com_cd = #{com_cd}
+		 ORDER by cod_so
+	</select>
+	
+	<!-- 신고 상태 변경 -->
+	<update id="updateReportStatus" parameterType="map">
+		UPDATE report
+		   SET rpt_st = #{rpt_st}
+		 WHERE rpt_id = #{rpt_id}
+	</update>
+  	
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itwillbs.unipick.mapper.BuyerMapper2">
+
+	<select id="BuyerLogin" parameterType="map">
+		SELECT *
+		  FROM buyers
+		WHERE buy_em = #{buyerId}
+<!-- 		<if test="sellerPw != ''"> -->
+		  AND buy_pw = #{buyerPw}
+<!-- 		</if> -->
+	</select>
+
+<select id="BuyEmail" parameterType="String" resultType="int">
+    SELECT COUNT(*)
+      FROM buyers
+     WHERE buy_em = #{buy_em}
+</select>
+
+<insert id="insertBuyer" parameterType="map">
+    INSERT INTO buyers (buy_em, buy_pw, buy_ph, acc_ta, acc_pa, acc_ma)
+   VALUES (#{buyerData.buy_em}, #{buyerData.buy_pw}, #{buyerData.buy_ph}, #{buyerData.acc_ta}, #{buyerData.acc_pa}, #{buyerData.acc_ma})
+</insert>
+
+<select id="selectEmployeeByNameAndPhone" parameterType="map" resultType="map">
+    SELECT buy_em
+    FROM buyers
+    WHERE buy_nm = #{buy_nm}
+    AND buy_ph = #{buy_ph}
+    LIMIT 1
+</select>
+
+<select id="findEmployeeByNoAndEmail" resultType="map">
+      SELECT buy_nm, buy_em
+    FROM buyers
+    WHERE buy_nm = #{buyNm} 
+      AND buy_em = #{buyEm}
+</select>
+
+<update id="updatePassword" parameterType="map">
+    UPDATE buyers
+    SET buy_pw = #{buyPw}
+    WHERE buy_em = #{buyEm}
+</update>
+
+
+</mapper>

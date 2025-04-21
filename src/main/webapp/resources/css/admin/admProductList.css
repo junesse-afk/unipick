@@ -1,0 +1,72 @@
+@charset "UTF-8";
+.admProductList-top-div > div {
+    width: auto;
+}
+.prdList{
+	cursor: pointer;
+}
+#pageList .page-link.active {
+    background-color: white;
+    color: black;
+	border: none;
+    font-weight: bold;
+    background-color: inherit !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+#pageList .page-link {
+    border: none;
+    background-color: white;
+    color: black;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s;
+    outline: none;
+    left: 0rem !important;
+}
+#pageList{
+	display: flex;
+    justify-content: center;
+}
+.search-div {
+    display: flex;
+    justify-content: flex-end;
+    flex-grow: 1;
+    gap: 10px;
+}
+#searchKind, #ListSearchWord{
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+.card-body {
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 1.25rem;
+}
+#search, #codeDetailRegister, #commonDetailColse{
+	color: white !important;
+    background: black !important;
+}
+.form-control-plaintext {
+	color: black;
+}
+
+footer.sticky-footer {
+    top: 2rem !important;
+    position: relative !important;
+    padding: 2.4rem 0;
+}
+
+.btn1 {
+	background: #f6c23e;
+	color: #292b2b;
+	font-size: 15px;
+	border: white;
+	
+}
+
+.card {
+	height: 725px !important;
+}

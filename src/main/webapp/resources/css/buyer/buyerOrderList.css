@@ -1,0 +1,110 @@
+@charset "UTF-8";
+
+.content {
+	width: 1200px;
+	min-height: 520px;
+	margin: auto;
+}
+
+#cards {
+	display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+    padding-bottom: 30px;
+}
+
+.card {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	border: 1px solid #ddd;
+	padding: 16px;
+	border-radius: 16px;
+	background: #fff;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+	transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.product {
+	border: 1px solid black;
+	width: 380px;
+	padding: 10px;
+}
+
+.prd-img {
+	width: 180px;
+    height: 180px;
+    object-fit: cover;
+}
+
+.left-info, .top-info {
+	display: flex;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.right-info {
+	display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.order-info {
+	display: flex;
+    flex-direction: column;
+    gap: 5px;
+	border-top: 1px solid black;
+}
+
+.order-btn {
+	height: 39px;
+    font-size: inherit;
+    border-radius: 8px;
+    cursor: pointer;
+	width: 82px;
+}
+
+.none {
+	visibility: hidden;
+}
+
+.show {
+	display: inline-block;
+}
+
+#radio-search {
+	display: flex;
+	flex-direction: column;
+	padding: 20px 0 20px 0;
+	gap: 10px;
+}
+
+#searchData {
+	height: 36px;
+	width: 600px;
+    border-radius: 10px;
+    font-size: 14px;
+    padding-left: 15px;
+}
+
+#ordSearch {
+	height: 39px;
+	width: 70px;
+    font-size: inherit;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.product-link, .detail-link {
+	color: #292b2b;
+	text-decoration: none;
+}
+
+#price {
+	color: #f2a900;
+}

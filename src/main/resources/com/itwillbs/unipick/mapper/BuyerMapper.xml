@@ -1,0 +1,780 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.itwillbs.unipick.mapper.BuyerMapper">
+  	
+  	<!-- 방문자 수 증가 -->
+  	<insert id="visitCount">
+  		INSERT INTO visit (vis_dt, vis_ct) VALUES (DATE(now()), 1)
+			ON DUPLICATE KEY 
+		UPDATE vis_ct = vis_ct + 1;
+  	</insert>
+  	
+<!--   	상단메뉴바 -->
+  	<select id="getAllMenu" parameterType="map">
+  	 SELECT lev_nm, lev_ul, lev_cd
+  	   FROM level
+  	  WHERE lev_cd like '%BUYERMENU%'
+  	    AND lev_yn = 'y'
+  	  ORDER BY lev_so
+  	</select>
+  	
+  	<!--   	상품상세조회 -->
+	<select id="getPrdDetail" parameterType="map">
+	 SELECT p.prd_cd, s.sel_nm, p.prd_nm, p.prd_ct,
+	  		CONCAT(ROUND(((p.prd_op - p.prd_sp) / p.prd_op) * 100, 0), '%') AS dc,
+	  		FORMAT(p.prd_op, 0) AS prd_op, 
+	  		FORMAT(p.prd_sp, 0) AS prd_sp,
+	  		w.buy_em
+	    FROM products p 
+	    JOIN sellers s
+          ON p.sel_id = s.sel_id
+        LEFT JOIN (SELECT buy_em, prd_cd
+					 FROM wishlist
+		   			WHERE buy_em = #{buyEm}) w
+		  ON p.prd_cd = w.prd_cd
+	   WHERE p.prd_cd = #{prdCd};
+	</select>
+	
+<!-- 	상품 상세 이미지 -->
+	<select id="getPrdImg" parameterType="map">
+	 SELECT fil_pt
+	   FROM product_images
+	  WHERE prd_cd = #{prdCd};
+	</select>
+	
+<!-- 	상품 상세 옵션 -->
+	<select id="getPrdOption" parameterType="map">
+	 SELECT DISTINCT o.clr_nm
+       FROM options o
+       JOIN common_detailcode c
+         ON o.siz_nm = c.cod_cd
+	  WHERE prd_cd = #{prdCd}
+	</select>
+	
+<!-- 	상품 리뷰조회 -->
+	<select id="getPrdReviews" parameterType="map">
+	 SELECT bu.buy_nm,
+	 		rv.opt_id,
+	 		rv.rev_ct,
+	 		ri.rei_pt,
+		    ot.clr_nm,
+		    cd.cod_nm,
+		    bu.buy_wt,
+		    bu.buy_ht,
+		    rv.rev_rt
+	   FROM reviews rv
+	   LEFT JOIN (SELECT rei_pt, rev_id
+					FROM review_images) ri 
+	     ON rv.rev_id = ri.rev_id
+	   JOIN options ot
+	     ON rv.opt_id = ot.opt_id
+	   JOIN common_detailcode cd
+	     ON ot.siz_nm = cd.cod_cd
+	   JOIN buyers bu
+    	 ON rv.buy_em = bu.buy_em
+	  WHERE prd_cd = #{prd_cd};
+	</select>
+	
+<!-- 	판매자 상세 페이지 -->
+	<select id="getselDetail" parameterType="map">
+		 SELECT sl.sel_nm,
+		 		sl.sel_if,
+		 		pi.fil_pt,
+		 		pd.prd_nm,
+		 		pd.prd_cd,
+		 		sl.sel_pp,
+		 		sl.sel_bp,
+		 		CONCAT(ROUND(((pd.prd_op - pd.prd_sp) / pd.prd_op) * 100, 0), '%') AS dc,
+			    FORMAT(pd.prd_sp, 0) AS prd_sp,
+			    w.buy_em
+		   FROM sellers sl 
+		   JOIN products pd
+		     ON sl.sel_id = pd.sel_id 
+		  RIGHT join product_images pi
+		     ON pd.prd_cd = pi.prd_cd
+		   LEFT JOIN (SELECT buy_em, prd_cd
+		   				FROM wishlist
+		   			   WHERE buy_em = #{buy_em}) w ON pd.prd_cd = w.prd_cd
+		  WHERE pd.prd_st = (SELECT cod_cd
+					           FROM common_detailcode 
+					          WHERE com_cd = 'PRD_REGISTERSTATUS'
+					            AND cod_nm = '승인')
+		    AND sl.sel_nm = #{sel_nm}
+		    AND pi.fil_nb = 1;
+	</select>
+	
+<!-- 	상품 상세 판매자 다른 상품 -->
+	<select id="getselanother" parameterType="map">
+	 SELECT pd.prd_nm,
+	 		pi.fil_pt,
+	 		pd.prd_op,
+	 		sl.sel_nm,
+	 		pd.prd_cd,
+		    CONCAT(ROUND(((pd.prd_op - pd.prd_sp) / pd.prd_op) * 100, 0), '%') AS dc,
+		    FORMAT(pd.prd_sp, 0) AS prd_sp
+	   FROM products pd
+	   JOIN sellers sl
+	     ON pd.sel_id = sl.sel_id
+	   JOIN product_images pi
+	     ON pd.prd_cd = pi.prd_cd
+	  WHERE sel_nm = #{selNm}
+	    AND prd_st  = (SELECT cod_cd
+				         FROM common_detailcode 
+				        WHERE com_cd = 'PRD_REGISTERSTATUS' 
+				          AND cod_nm = '승인')
+        AND fil_nb = 1;
+	</select>
+<!--   	상품검색  -->
+  	<select id="getSearchPrd" parameterType="map">
+  	 SELECT pd.prd_nm,
+  	 		sl.sel_nm,
+  	 		pd.prd_cd,
+  	 		cd.cod_nm,
+  	 		CONCAT(ROUND(((pd.prd_op - pd.prd_sp) / pd.prd_op) * 100, 0), '%') AS dc,
+			FORMAT(pd.prd_sp, 0) AS prd_sp, 
+			pd.prd_bd,
+			pi.fil_nm,
+			pi.fil_pt,
+			w.buy_em
+  	   FROM products pd
+       JOIN (SELECT prd_cd,
+					fil_pt,
+					fil_nm
+			   FROM product_images
+			  WHERE fil_nb = 1) pi 
+	     ON pd.prd_cd = pi.prd_cd
+	   JOIN common_detailcode cd
+	   	 ON  pd.prd_bd= cd.cod_cd
+	   JOIN sellers sl
+	     ON pd.sel_id = sl.sel_id
+	   LEFT JOIN (select buy_em, prd_cd
+	   				FROM wishlist
+	   			   WHERE buy_em = #{buy_em}) w ON pd.prd_cd = w.prd_cd
+      WHERE (prd_nm LIKE CONCAT('%',#{query},'%')
+      	 OR sl.sel_nm LIKE CONCAT('%', #{query}, '%'))
+      	AND prd_st = (SELECT cod_cd
+				        FROM common_detailcode 
+				       WHERE com_cd = 'PRD_REGISTERSTATUS' 
+				         AND cod_nm = '승인'); 
+  	</select>
+  	
+  	<!-- 카테고리 메뉴 -->
+  	<select id="getCategory" parameterType="map">
+  		SELECT *
+  		  FROM level
+  		 WHERE lev_cd like 'CATEGORY%'
+  		   AND lev_yn = 'y'
+  		 ORDER by lev_cd, lev_so;
+  	</select>
+  	
+  	<!-- 상품정렬종류 -->
+  	<select id="getProductSortKind" parameterType="map">
+  		SELECT *
+  		  FROM common_detailcode
+ 		 WHERE com_cd = 'PRODUCT_SORT';
+  	</select>
+  	
+  	<!-- 상품정렬 -->
+  	<select id="productSort" parameterType="map">
+  		SELECT i.fil_nm,
+  			   i.fil_pt,
+  			   s.sel_nm,
+  			   p.prd_cd,
+  			   p.prd_nm,
+  			   FORMAT(p.prd_op, 0) AS prd_op,
+  			   FORMAT(p.prd_sp, 0) AS prd_sp,
+  			   CONCAT(ROUND(((p.prd_op - p.prd_sp) / p.prd_op) * 100, 0), '%') AS dc,
+               p.prd_ca,
+               p.prd_dt,
+  			   r.count,
+  			   w.buy_em,
+               cd.cod_nm,
+               od.cnt
+  		  FROM products p 
+		  LEFT JOIN (SELECT prd_cd, fil_nm, fil_pt
+					   FROM product_images
+					  WHERE fil_nb = 1) i ON p.prd_cd = i.prd_cd
+		  LEFT JOIN sellers s ON p.sel_id = s.sel_id
+		  LEFT JOIN (SELECT prd_cd, COUNT(*) AS 'count'
+				  	   FROM options o JOIN reviews r ON o.opt_id = r.opt_id
+				 	  GROUP by prd_cd) r ON p.prd_cd = r.prd_cd
+		  LEFT JOIN common_detailcode cd ON p.prd_bd = cd.cod_cd
+		  LEFT JOIN (SELECT buy_em, prd_cd
+		  			   FROM wishlist
+		   			  WHERE buy_em = #{buy_em}) w ON p.prd_cd = w.prd_cd
+          LEFT JOIN (SELECT prd_cd, COUNT(odd_qt) as cnt
+					   FROM order_details od
+					   JOIN options o on od.opt_id = o.opt_id
+					  WHERE odd_st = '배송완료'
+					  GROUP BY prd_cd) od on p.prd_cd = od.prd_cd
+		 WHERE prd_st = (SELECT cod_cd
+		 				   FROM common_detailcode 
+		 				  WHERE com_cd = 'PRD_REGISTERSTATUS' 
+		 				    AND cod_nm = '승인')
+  		 <if test="lev_cd != 'All'">
+  		 	AND p.prd_ca LIKE CONCAT(#{lev_cd}, '%')
+  		 </if>
+  		 <choose>
+  		 	<when test="kind == 'PST01'">
+  		 		ORDER BY od.cnt DESC
+  		 	</when>
+  		 	<when test="kind == 'PST02'">
+  		 		ORDER BY r.count DESC
+  		 	</when>
+  		 	<when test="kind == 'PST03'">
+  		 		ORDER BY p.prd_dt DESC
+  		 	</when>
+  		 	<when test="kind == 'PST04'">
+  		 		ORDER BY p.prd_sp DESC
+  		 	</when>
+  		 	<when test="kind == 'PST05'">
+  		 		ORDER BY p.prd_sp
+  		 	</when>
+  		 </choose>
+  		 <if test="limit != null and !limit.equals('')">
+  		 	LIMIT ${limit}
+  		 </if>
+  	</select>
+  	
+  	<!--   	상품 옵션 -->
+	<select id="getColors" parameterType="map">
+	 SELECT c.cod_cd,
+	 		c.cod_nm,
+	 		o.prd_qt, 
+	 		FORMAT(p.prd_sp, 0) AS prd_sp
+	   FROM options o 
+	   JOIN products p 
+         ON o.prd_cd = p.prd_cd
+       JOIN common_detailcode c
+         ON o.siz_nm = c.cod_cd
+	  WHERE o.prd_cd =#{prd_cd}
+	  	AND o.clr_nm = #{color}
+	</select>
+	
+	<!-- 찜 등록 -->
+	<insert id="wishInsert" parameterType="map">
+		INSERT INTO wishlist(buy_em,
+							 prd_cd)
+					  VALUES(#{buy_em},
+							 #{prd_cd})
+	</insert>
+	
+	<!-- 찜 해제 -->
+	<delete id="wishDelete" parameterType="map">
+		DELETE FROM wishlist
+		 WHERE buy_em = #{buy_em}
+		   AND prd_cd = #{prd_cd}
+	</delete>
+	
+	<!-- 마이페이지 데이터 -->
+	<select id="myIcon" parameterType="map">
+		SELECT lev_cd, lev_nm, lev_ul
+		  FROM level
+		 WHERE lev_cd LIKE 'MyPage%'
+		   AND lev_yn = 'y'
+		 ORDER BY lev_so
+	</select>
+	
+	<!-- 구매자 정보 -->
+	<select id="buyerInfo" parameterType="map">
+		SELECT buy_em,
+			   buy_nm,
+			   buy_ph,
+			   buy_bd,
+			   buy_nn,
+			   buy_gn,
+			   buy_ht,
+			   buy_wt
+		  FROM buyers
+		 WHERE buy_em = #{buy_em};
+	</select>
+	
+<!-- 	상품 주문 -->
+	<select id="getPrdOrder" parameterType="map">
+	 SELECT p.prd_cd,
+	 		s.sel_nm,
+	 		p.prd_nm,
+	 		p.prd_sf,
+	  		CONCAT(ROUND(((p.prd_op - p.prd_sp) / p.prd_op) * 100, 0), '%') AS dc,
+	  		FORMAT(p.prd_op, 0) AS prd_op, 
+	  		FORMAT(p.prd_sp, 0) AS prd_sp,
+	  		pi.fil_pt
+	   FROM products p 
+	   JOIN sellers s
+         ON p.sel_id = s.sel_id
+       JOIN (SELECT prd_cd, fil_pt 
+               FROM product_images
+              WHERE fil_nb = 1) pi
+         ON p.prd_cd = pi.prd_cd
+	  WHERE p.prd_cd = #{prd_cd};
+	</select>
+	
+	<!-- 구매자 정보 수정 -->
+	<update id="buyerModify" parameterType="map">
+		UPDATE buyers SET buy_nm = #{buy_nm},
+						  buy_ph = #{buy_ph},
+						  buy_bd = #{buy_bd},
+						  buy_nn = #{buy_nn},
+						  buy_gn = #{buy_gn},
+						  buy_ht = #{buy_ht},
+						  buy_wt = #{buy_wt}
+					WHERE buy_em = #{buy_em}
+	</update>
+	
+	<!-- 리뷰 정보 -->
+	<select id="reviewInfo" parameterType="map">
+		SELECT r.rev_ca as rev_ca,
+			   r.rev_id,
+			   r.rev_rt,
+			   r.rev_ct,
+			   p.prd_nm,
+			   c.cod_nm,
+			   o.clr_nm,
+			   b.buy_em,
+			   b.buy_nn,
+			   b.buy_ht,
+			   b.buy_wt
+		  FROM reviews r
+		  JOIN buyers b ON r.buy_em = b.buy_em
+		  JOIN options o ON r.opt_id = o.opt_id
+		  JOIN products p ON o.prd_cd = p.prd_cd
+		  JOIN common_detailcode c ON o.siz_nm = c.cod_cd
+		 WHERE r.buy_em = #{buy_em}
+		 <if test="date != null and !date.equals('')">
+		     AND DATE(r.rev_ca) BETWEEN #{date} AND CURDATE()
+		 </if>
+		 ORDER BY rev_ca DESC
+	</select>
+	
+	<!-- 주문 정보 -->
+	<select id="OrderListInfo" parameterType="map">
+		SELECT o.ord_at,
+			   o.ord_id,
+			   o.ord_nm,
+			   o.ord_ph,
+			   o.ord_ad,
+			   o.ord_dm,
+			   o.ord_pm,
+			   od.odd_id,
+		 	   od.odd_st,
+			   od.odd_qt,
+			   od.odd_am,
+			   c.cod_nm,
+			   p.prd_nm,
+			   p.prd_cd,
+			   p.prd_sf,
+			   p.prd_sp,
+			   s.sel_nm,
+			   op.clr_nm,
+			   pi.fil_pt,
+			   r.rev_id
+		  FROM orders o
+		  LEFT JOIN order_details od ON o.ord_id = od.ord_id
+		  LEFT JOIN options op ON od.opt_id = op.opt_id
+		  LEFT JOIN common_detailcode c ON c.cod_cd = op.siz_nm
+		  LEFT JOIN products p ON op.prd_cd = p.prd_cd
+		  LEFT JOIN sellers s ON p.sel_id = s.sel_id
+		  LEFT JOIN (SELECT prd_cd, fil_pt 
+		               FROM product_images
+		              WHERE fil_nb = 1) pi ON p.prd_cd = pi.prd_cd
+		  LEFT JOIN (SELECT rev_id,
+		  					opt_id
+		  			   FROM reviews
+		  			  WHERE buy_em = #{buy_em}) r ON op.opt_id = r.opt_id
+		 WHERE o.buy_em = #{buy_em}
+		   <if test="date != null and !date.equals('')">
+		       AND DATE(o.ord_at) BETWEEN #{date} AND CURDATE()
+		   </if>
+		   <if test="searchData != null and !searchData.equals('')">
+		       AND (p.prd_nm like CONCAT ('%', #{searchData}, '%')
+		       OR  s.sel_nm like CONCAT ('%', #{searchData}, '%'))
+		   </if>
+		   <if test="ord_id != null and !ord_id.equals('')">
+		       AND o.ord_id = #{ord_id}
+		   </if>
+		 ORDER BY o.ord_at DESC
+	</select>
+	
+	<!-- 회원 탈퇴 -->
+	<update id="Withdraw" parameterType="map">
+		UPDATE buyers
+		   SET acc_st = 'BS02'
+		 WHERE buy_em = #{buy_em}
+	</update>
+	
+	<!-- 상품 썸네일, 이름 -->
+	<select id="prdInfo" parameterType="map">           
+		SELECT p.prd_nm,
+			   i.fil_pt,
+			   cd.cod_nm,
+			   od.odd_qt,
+			   o.clr_nm,
+			   o.opt_id
+		FROM order_details od
+		JOIN options o ON od.opt_id = o.opt_id
+		JOIN common_detailcode cd ON o.siz_nm = cd.cod_cd
+		JOIN products p ON o.prd_cd = p.prd_cd
+		JOIN (SELECT prd_cd,
+					 fil_nm,
+					 fil_pt
+				FROM product_images
+			   WHERE fil_nb = 1) i ON p.prd_cd = i.prd_cd
+		WHERE odd_id = #{odd_id}
+		  AND prd_st = (SELECT cod_cd
+		 				  FROM common_detailcode 
+		 				 WHERE com_cd = 'PRD_REGISTERSTATUS' 
+		 				   AND cod_nm = '승인');
+	</select>
+	
+	<!-- 리뷰 등록 -->
+	<insert id="registerReview" useGeneratedKeys="true" keyProperty="rev_id" parameterType="map">
+		INSERT
+		  INTO reviews(rev_id,
+		  			   buy_em,
+		  			   opt_id,
+		  			   rev_rt,
+		  			   rev_ct,
+		  			   rev_ca)
+			 	VALUES(DEFAULT,
+			 		   #{buy_em},
+			 		   #{opt_id},
+			 		   #{rev_rt},
+			 		   #{rev_ct},
+			 		   DEFAULT)
+	</insert>
+	
+	<!-- 리뷰 이미지 -->
+	<select id="reviewImage" parameterType="map">
+		SELECT r.rev_id,
+			   rei_pt
+		  FROM reviews r
+		  JOIN review_images i ON r.rev_id = i.rev_id
+		 WHERE r.buy_em = #{buy_em}
+	</select>
+	
+	<!-- 이미지 정보 등록 -->
+	<insert id="registerReviewImage" parameterType="map">
+		INSERT
+		  INTO review_images (rei_id,
+		  					  rev_id,
+		  					  rei_nm,
+		  					  rei_pt,
+		  					  rei_ca)
+		  			  VALUES (default,
+		  			  		  #{rev_id},
+		  			   		  #{fil_nm},
+		  			   		  #{fil_pt},
+		  			   		  NOW())
+	</insert>
+	
+<!-- 	주문 등록시 옵션 id들고오기 -->
+	<select id="getOptionId" parameterType="map">
+	 SELECT o.opt_id
+	   FROM options o
+       JOIN common_detailcode c
+         ON o.siz_nm = c.cod_cd
+	  WHERE o.prd_cd = #{prdCd}
+	  	AND o.clr_nm = #{clrNm}
+        AND c.cod_cd = #{sizNm}
+	</select>
+	
+	<!-- 	주문 등록 -->
+	<insert id="insertOrder" parameterType="map" useGeneratedKeys="true" keyProperty="ord_id">
+	 INSERT 
+	   INTO orders (buy_em,
+				    ord_nm, 
+					ord_ph, 
+					ord_pc, 
+					ord_ad, 
+					ord_dm, 
+					ord_at, 
+					ord_pm)
+     		VALUES (#{buy_em},
+          		 	#{shipping_name}, 
+          	 		#{shipping_telephone}, 
+          	 		#{shipping_zipcode}, 
+             		CONCAT(#{shipping_address}, ', ', #{shipping_addDetail}), 
+             		#{shipping_memo}, 
+             		now(), 
+             		'카카오')
+	</insert>
+<!-- 	주문 상세 등록 -->
+	<insert id="insertOrderDetail" parameterType="map">
+	 INSERT 
+	   INTO order_details (ord_id, 
+	   					   odd_qt,
+	   					   odd_st, 
+	   					   opt_id, 
+	   					   odd_am)
+	      		   VALUES(#{ord_id},
+	      		   		  #{qty},
+	      		   		  DEFAULT,
+	      		   		  #{opt_id},
+	      		   		  #{odd_am})
+	</insert>	
+<!-- 	주문시 상품 재고 빼기 -->
+	<update id="minusPrdqt" parameterType="map">
+	 UPDATE options
+	    SET prd_qt = prd_qt - #{qty}
+	  WHERE opt_id = #{opt_id}
+	</update>
+	
+	<!-- 최근 본 상품 등록 -->
+	<insert id="registerRecentlyPrd" parameterType="map">
+		INSERT INTO recently_products (buy_em, prd_cd, vie_tm)
+							   VALUES (#{buy_em}, #{productId}, DEFAULT)
+			  ON DUPLICATE KEY UPDATE vie_tm = DEFAULT;
+	</insert>
+	
+	<!-- 최근 본 상품 리스트 -->
+	<select id="myRecentlyPrd" parameterType="map">    
+		SELECT rp.vie_tm,
+			   p.prd_cd,
+			   p.prd_nm,
+			   FORMAT(p.prd_op, 0) AS prd_op,
+			   FORMAT(p.prd_sp, 0) AS prd_sp,
+			   CONCAT(ROUND(((p.prd_op - p.prd_sp) / p.prd_op) * 100, 0), '%') AS dc,
+			   s.sel_nm,
+			   i.fil_pt
+		  FROM recently_products rp
+		  JOIN products p ON rp.prd_cd = p.prd_cd
+		  JOIN sellers s ON p.sel_id = s.sel_id
+		  JOIN (SELECT prd_cd,
+					   fil_pt
+				  FROM product_images
+			     WHERE fil_nb = 1) i ON p.prd_cd = i.prd_cd
+		 WHERE buy_em = #{buy_em}
+		 ORDER BY vie_tm DESC
+		 LIMIT 100
+	</select>
+	
+<!-- 	판매자 페이지내에 검색 -->
+	<select id="selPrdsearch" parameterType="map">
+	 SELECT pd.prd_nm,
+	 		sl.sel_nm,
+	 		pd.prd_cd,
+	 		cd.cod_nm,
+  	 		CONCAT(ROUND(((pd.prd_op - pd.prd_sp) / pd.prd_op) * 100, 0), '%') AS dc,
+			FORMAT(pd.prd_sp, 0) AS prd_sp, 
+			pd.prd_bd,
+			pi.fil_nm,
+			pi.fil_pt,
+			w.buy_em
+  	   FROM products pd
+       JOIN  product_images pi 
+	     ON pd.prd_cd = pi.prd_cd
+	   JOIN common_detailcode cd
+	   	 ON  pd.prd_bd = cd.cod_cd
+	   JOIN sellers sl
+	     ON pd.sel_id = sl.sel_id
+	   LEFT JOIN (SELECT buy_em, prd_cd
+	   				FROM wishlist
+	   			   WHERE buy_em = #{buy_em}) w ON pd.prd_cd = w.prd_cd
+      WHERE pd.prd_nm LIKE CONCAT('%',#{keyword},'%')
+        AND sl.sel_nm = #{sel_nm}
+      	AND pd.prd_st = (SELECT cod_cd
+				           FROM common_detailcode 
+				          WHERE com_cd = 'PRD_REGISTERSTATUS' 
+				            AND cod_nm = '승인')
+        AND fil_nb = 1;  
+	</select>
+<!-- 	추천상품 -->
+	<select id="getRecommendPrd" parameterType="map">
+	 SELECT p.prd_nm,
+	 		p.prd_sp,
+	 		s.sel_nm,
+	 		pi.fil_pt,
+	 		p.prd_cd,
+		    CONCAT(ROUND(((p.prd_op - p.prd_sp) / p.prd_op) * 100, 0), '%') AS dc,
+		    w.buy_em
+	   FROM products p
+	   JOIN product_images pi 
+	     ON p.prd_cd = pi.prd_cd
+	   JOIN sellers s
+	     ON p.sel_id = s.sel_id
+	   LEFT JOIN (SELECT buy_em, prd_cd
+	   				FROM wishlist
+	   			   WHERE buy_em = #{buy_em}) w ON w.prd_cd = p.prd_cd
+	  WHERE p.prd_ca = (SELECT prd_ca
+						  FROM products 
+						 WHERE prd_cd = #{prd_cd})
+	    AND p.prd_st = (SELECT cod_cd
+				          FROM common_detailcode 
+				         WHERE com_cd = 'PRD_REGISTERSTATUS' 
+				           AND cod_nm = '승인')
+	    AND pi.fil_nb = 1;
+	</select>
+	
+<!-- 	판매자 상세 카테고리 -->
+	<select id="categoryList" parameterType="map">
+	 SELECT *
+	   FROM level
+	  WHERE lev_cd like 'CATEGORY__'
+	    AND lev_yn = 'y'
+	  ORDER BY lev_cd, lev_so;
+	</select>
+
+<!-- 	판매자 상세 카테고리 클릭시 -->
+	<select id="getCatePrd" parameterType="map">
+	SELECT p.prd_nm,
+		   p.prd_sp,
+		   p.prd_bd,
+		   p.prd_cd,
+		   s.sel_nm,
+		   pi.fil_pt,
+		   CONCAT(ROUND(((p.prd_op - p.prd_sp) / p.prd_op) * 100, 0), '%') AS dc,
+		   w.buy_em
+	  FROM products p
+	  JOIN sellers s
+	    ON p.sel_id = s.sel_id
+	  JOIN product_images pi
+    	ON p.prd_cd = pi.prd_cd
+      LEFT JOIN (SELECT buy_em, prd_cd
+      			   FROM wishlist
+      			  WHERE buy_em = #{buy_em}) w ON p.prd_cd = w.prd_cd
+	 WHERE 
+	 	 (CASE 
+		      WHEN #{category} = 'all' THEN p.prd_ca LIKE CONCAT('CATEGORY__', '%') 
+		      ELSE p.prd_ca LIKE CONCAT(#{category}, '%') 
+		  END)
+	   AND s.sel_nm = #{sel_nm}
+	   AND p.prd_st = (SELECT cod_cd
+				         FROM common_detailcode 
+				        WHERE com_cd = 'PRD_REGISTERSTATUS' 
+				          AND cod_nm = '승인')
+	   AND pi.fil_nb = 1;
+	</select>
+		
+	<!-- 	장바구니  -->
+	<insert id="cartInsert" parameterType="map">
+	 INSERT INTO cart(buy_em,
+	 				  crt_qt,
+	 				  opt_id)
+		 	   VALUES(#{buy_em},
+		 	  		  #{qty},
+		 	  		  (SELECT opt_id 
+	                     FROM options 
+	                    WHERE clr_nm = #{color}
+	                      AND siz_nm = #{size}
+	                      AND prd_cd = #{prd_cd}));
+	</insert>
+<!-- 	장바구니 같은 옵션, 상품일 경우 업데이트 -->
+	<update id="updateCartQty" parameterType="map">
+     UPDATE cart
+    	SET crt_qt = crt_qt + #{qty}
+      WHERE buy_em = #{buy_em}
+        AND opt_id = (SELECT opt_id 
+			            FROM options 
+			           WHERE clr_nm = #{color}
+			             AND siz_nm = #{size}
+			             AND prd_cd = #{prd_cd})
+	</update>
+	
+<!-- 	장바구니 조회 -->
+	<select id="cartSelect" parameterType="map">
+	 SELECT *
+	   FROM cart c
+	   	JOIN options o 
+	     ON c.opt_id = o.opt_id
+	   JOIN common_detailcode d
+	     ON o.siz_nm = d.cod_cd
+	   JOIN products p
+	     ON o.prd_cd = p.prd_cd
+	   JOIN sellers s
+	     ON p.sel_id = s.sel_id
+	   LEFT JOIN product_images i
+	     ON p.prd_cd = i.prd_cd
+	  WHERE i.fil_nb = 1
+	    AND buy_em = #{buy_em};
+	</select>
+	
+	
+	<!-- 찜 목록 -->
+	<select id="myWishPrd">
+		SELECT w.buy_em,
+			   s.sel_nm,
+			   pi.fil_pt,
+			   p.prd_cd,
+			   p.prd_nm,
+			   FORMAT(p.prd_op, 0) AS prd_op,
+			   FORMAT(p.prd_sp, 0) AS prd_sp,
+			   CONCAT(ROUND(((p.prd_op - p.prd_sp) / p.prd_op) * 100, 0), '%') AS dc
+		  FROM (SELECT buy_em, prd_cd
+				  FROM wishlist
+			     WHERE buy_em = #{buy_em}) w
+		  LEFT JOIN products p ON w.prd_cd = p.prd_cd
+		  LEFT JOIN (SELECT prd_cd, fil_pt
+		  			   FROM product_images
+		  			  WHERE fil_nb = 1) pi ON p.prd_cd = pi.prd_cd
+		  LEFT JOIN sellers s ON p.sel_id = s.sel_id;
+	</select>
+<!-- 	장바구니 삭제 -->
+	<delete id="deleteCart">
+	  DELETE FROM cart
+       WHERE crt_id = #{crt_id}
+         AND buy_em = #{buy_em};
+	</delete>
+	
+<!-- 	장바구니 수정 -->
+	<update id="updateCart">
+	 UPDATE cart 
+	    SET crt_qt = #{updataData.qty}
+	  WHERE crt_id = #{updataData.crt_id}
+        AND buy_em = #{buy_em};
+	</update>
+	
+	<!-- 상품 코드로 판매자 ID 조회 -->
+	<select id="getSellerIdByProductId" parameterType="String" resultType="String">
+		SELECT sel_id
+		FROM products
+		WHERE prd_cd = #{prd_cd}
+	</select>
+	
+	<!-- 메인 추천 상품 -->
+	<select id="recomProduct" parameterType="map">
+		SELECT i.fil_nm,
+  			   i.fil_pt,
+  			   s.sel_nm,
+  			   p.prd_cd,
+  			   p.prd_nm,
+  			   FORMAT(p.prd_op, 0) AS prd_op,
+  			   FORMAT(p.prd_sp, 0) AS prd_sp,
+  			   CONCAT(ROUND(((p.prd_op - p.prd_sp) / p.prd_op) * 100, 0), '%') AS dc,
+               p.prd_ca,
+               p.prd_dt,
+               w.buy_em,
+               cd.cod_nm
+  		  FROM products p 
+		  LEFT JOIN (SELECT prd_cd, fil_nm, fil_pt
+					   FROM product_images
+					  WHERE fil_nb = 1) i ON p.prd_cd = i.prd_cd
+		  LEFT JOIN (SELECT buy_em, prd_cd
+		   			   FROM wishlist
+		   			  WHERE buy_em = #{buy_em}) w ON p.prd_cd = w.prd_cd
+		  LEFT JOIN sellers s ON p.sel_id = s.sel_id
+		  LEFT JOIN common_detailcode cd ON p.prd_bd = cd.cod_cd
+		 WHERE prd_st = (SELECT cod_cd
+		 				   FROM common_detailcode 
+		 				  WHERE com_cd = 'PRD_REGISTERSTATUS' 
+		 				    AND cod_nm = '승인')
+		 ORDER BY RAND()
+		 LIMIT #{limit}
+	</select>
+	
+<!-- 	메인 스토어 페이지 -->
+	<select id="sellerStore" parameterType="list">
+	 SELECT sel_nm,
+	 		sel_pp,
+	 		sel_if
+	   FROM sellers;
+	</select>
+	
+<!-- 	메인 상단 장바구니 갯수 -->
+	<select id="cartCnt">
+	 SELECT count(crt_id) AS count
+	   FROM cart
+	  WHERE buy_em = #{buy_em};
+	</select>
+  </mapper>

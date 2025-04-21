@@ -1,0 +1,237 @@
+@charset "UTF-8";
+.ttpr{
+	display: flex;
+    justify-content: end;
+    font-size: 25px;
+    color: #f2a900;
+}
+#orderInfo-container{
+	max-width: 1160px;
+    padding-bottom: 100px;
+    margin-left: 894px;
+}
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    appearance: none; /* 기본 체크박스 스타일을 제거 */
+    border: 2px solid #ccc; /* 기본 테두리 색상 */
+    border-radius: 26px;
+    background-color: white; /* 배경색은 기본 */
+    cursor: pointer;
+    position: relative; /* 체크 표시를 만들기 위한 위치 설정 */
+    transition: border-color 0.3s ease, background-color 0.3s ease; /* 색상 변경 효과 */
+}
+input[type="checkbox"]:checked {
+    border-color: #f2a900;
+    background-color: #f2a900;
+}
+/* 체크박스 안에 체크 표시 */
+input[type="checkbox"]:checked::before {
+    content: '\2713'; /* 체크 표시 (✔) */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* 체크 표시를 중앙에 배치 */
+    color: white; /* 체크 표시 색상 */
+    font-size: 14px; /* 체크 표시 크기 */
+}
+.prd {
+	height: 66px;
+	flex: 1 0 120px; /* 고정 너비로 설정 */
+	align-items: center;
+}
+.product-line {
+	display: flex;
+	align-items: center; /* 세로 가운데 정렬 */
+    width: 900px;
+    justify-content: space-between;
+}
+.prd-sp{
+	    margin-left: 154px;
+    font-size: 1.2em;
+}
+.tt{
+	font-size: 1.2em;
+    justify-content: end;
+    display: flex;
+    margin-top: 20px;
+    color: #f2a900;
+}
+#price-button button {
+    padding: 25px;
+    width: 100%;
+    max-width: 260px;
+    text-align: center;
+    margin: 0 auto;
+    display: block;
+/*     background: #ccc; */
+/*     color: #fff; */
+	cursor: pointer;
+    font-size: 1.5em;
+    border: none; 
+    outline: none; 
+/*     cursor: not-allowed; */
+    border-radius: 65px;
+    margin-bottom: 20px;
+}
+#price-button button.active {
+    background: black;
+    color: white;
+    cursor: pointer;
+}
+#best, #new {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 50px;
+}
+.opt{
+	flex: 1;
+    background-color: #f5f5f5;
+    padding: 10px;
+    border-radius: 8px;
+    width: 321px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* 양쪽 끝으로 정렬 */
+    gap: 10px;
+}
+.check{
+	display: flex;
+	
+}
+.all, .check{
+	padding-bottom: 20px;
+    border-bottom: 1px solid #e8e9eb;
+}
+.all button{
+	background: none;     /* 배경 제거 */
+	border: none;         /* 테두리 제거 */
+	outline: none;        /* 포커스 테두리 제거 */
+	box-shadow: none;     /* 그림자 제거 */
+	cursor: pointer; 
+	margin-left: 1000px;
+}
+.info {
+	display: flex;
+    height: 20px;
+    font-size: 20px;
+    margin-left: 420px;
+    gap: 248px;
+}
+.qty-btn {
+    border: none;
+    width: 26px;
+    height: 30px;
+    color: #292b2b;
+    background-color: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+.qty-input {
+    height: 28px;
+    font-size: 14px;
+    width: 32px;
+    text-align: center;
+    border: none;
+}
+#new {
+    padding-bottom: 50px;
+}
+.prd_nm{
+    font-size: 1.2em;
+    height: auto;
+    max-width: 360px;
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+.sel_nm{
+	font-weight: bold;
+}
+.prd, .del{
+	display: flex;
+	justify-content: space-between;
+	font-size: 1.2em;
+}
+.two {
+    display: flex;
+    justify-content: space-between; /* 자식 요소들을 양쪽 끝으로 배치 */
+    align-items: center; /* 수직 가운데 정렬 */
+    padding-right: 15px;
+    font-size: 25px;
+    margin-bottom: 30px;
+}
+.tie {
+	display: flex;
+  	gap: 20px; /* 이미지와 텍스트 사이 간격 */
+  	margin-bottom: 20px;
+  	padding-top: 15px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #e8e9eb;
+}
+.all {
+	display: flex;
+	font-size: 20px;
+	width: 1139px;
+}
+.top_view, .bottom_view {
+	display: flex;
+} 
+
+#img12 {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+#img12 div img {
+	width: 220px;
+    height: 220px;
+    object-fit: cover;
+}
+
+.product_posting {
+	padding: 5px;
+}
+
+
+#img12 .first, .second, .third {
+	display: flex;
+}
+
+#img12 div div a, .two > a {
+	text-decoration: none;
+	color: #292b2b;
+}
+
+
+/* 노트북 & 테블릿 가로 (해상도 1024px ~ 1279px) */
+@media all and (min-width:1024px) and (max-width:1279px) {
+    #best {
+    	padding-left: 15px;
+    }
+}
+/* 테블릿 가로 (해상도 768px ~ 1023px) */
+@media all and (min-width:768px) and (max-width:1023px) {
+	#best {
+    	padding-left: 15px;
+    }
+}
+/* 모바일 가로 & 테블릿 세로 (해상도 480px ~ 767px) */
+@media all and (min-width:480px) and (max-width:767px) {
+	#best {
+    	padding-left: 15px;
+    }
+    #img12 .first, #img12 .second, #img12 .third{
+    	display: block;
+    }
+}
+/* 모바일 세로 (해상도 ~ 479px) */
+@media all and (max-width:479px) {
+	#best {
+    	padding-left: 15px;
+    }
+    #img12 .first, #img12 .second, #img12 .third{
+    	display: block;
+    }
+}

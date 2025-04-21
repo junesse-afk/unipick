@@ -1,0 +1,473 @@
+@charset "UTF-8";
+
+#time{
+	padding-left: 23px;
+}
+#cs {
+	padding-left: 15px;	
+}
+.rev-ema {
+	font-weight: 700;
+	font-size: 15px;
+}
+.st{
+	margin-left: 10px;
+}
+.star-ema{
+	display: flex;
+    align-items: center;
+}
+.star-filled{
+	color: #f2a900;
+	font-size: 25px;
+}
+.rev{
+	background-color: rgb(250, 250, 251);	
+}
+.rev-opt{
+	display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 10px;
+    height: 30px;
+    
+}
+.rev-opt p {
+    margin-left: 10px; /* 위아래 간격을 10px로 설정 */
+}
+.info{
+	display: flex;
+    align-items: baseline;
+    gap: 10px; 
+}
+.rev-optTitle,
+.buy-info {
+    display: flex;
+    flex-direction: column;
+}
+.rev-ct{
+	margin-top: 10px;
+	overflow-wrap: break-word;
+}
+#rev div p {
+	font-size: 15px !important;
+}
+.review-img{
+	width: 300px;
+    height: 300px;
+    object-fit: cover;
+}
+.prdInfo, .pick-nm {
+	color: #292b2b;
+    font-weight: 600;
+    line-height: 16px;
+    font-size: 16px !important;
+    padding-bottom: 5px !important;
+    word-wrap: break-word;
+    width: 250px;
+    padding-top: 0px !important;
+}
+.prd-item img{
+    width: 278px;
+    height: 280px;
+    object-fit: cover;
+}
+.prd_pr, .pick-pc {
+	display: flex;
+	align-items: center;
+}
+.dc, .pick-dc {
+    font-size: 29px;
+    font-weight: bold;
+    color: #f2a900 !important;
+    padding-right: 15px;
+    padding-top: 0px !important;
+}
+.prd_sp, .pick-sp{
+	font-size: 18px !important;
+    padding-top: 4px;
+    font-weight: bold !important;
+    padding-top: 0px !important;
+}
+.product-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: row;
+    max-width: 1160px;
+    margin: 40px auto;
+}
+
+#product{
+	margin-left: 51px;
+}
+.image-container img {
+	width: 540px;
+    height: 560px;
+    display: block;
+    object-fit: cover;
+}
+#prev-btn{
+	display: flex;
+    top: 473px;
+    position: absolute;
+    background-color: #121314;
+    opacity: 0.5;
+    border-radius: 19px;
+    color: #d2d5d6;
+    width: 34px;
+    height: 34px;
+    justify-content: center;
+    margin-left: 3px;
+}
+#next-btn{
+	align-items: center;
+    display: flex;
+    top: 473px;
+    position: absolute;
+    margin-left: 502px;
+    background-color: #121314;
+    opacity: 0.5;
+    border-radius: 19px;
+    color: #d2d5d6;
+    width: 34px;
+    height: 34px;
+    justify-content: center;
+}
+#prev-btn, #next-btn{
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+#product,.product-container {
+	display: flex;
+/* 	justify-content: space-between; */
+    align-items: flex-start;
+}
+#qty-input{
+	height: 28px;
+    font-size: 14px;
+    width: 32px;
+    text-align: center;
+    border: none;
+}
+.kakao-pay-btn {
+	background-color: #FFCD00;
+}
+.product-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.product-info h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.product-info p {
+    font-size: 18px;
+    color: #666;
+}
+
+.product-info .discount {
+    font-size: 30px;
+    font-weight: bold;
+    color: #333;
+    margin-right: 16px;
+    
+}
+.button-container {
+    display: flex;
+    gap: 14px;
+    margin: 20px 52px 0 16px;
+}
+.option-box {
+    background-color: #f5f5f5; 
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    margin: 0 52px 0 16px;
+    width: 81%;
+    height: 50px;
+}
+#scrollToBottom {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #fff;
+    color: #a1a9ad;
+    border: none;
+    border-radius: 39px;
+    margin: 5px;
+    position: fixed;
+    width: 3rem;
+    right: 20px;
+    bottom: 166px;
+    z-index: 9999;
+    cursor: pointer;
+}
+#scrollToTop{
+	padding: 10px;
+    font-size: 16px;
+    background-color: #fff;
+    color: #a1a9ad;
+    border: none;
+    border-radius: 39px;
+    margin: 5px;
+    position: fixed;
+    width: 3rem;
+    right: 20px;
+    bottom: 210px;
+    z-index: 9999;
+    cursor: pointer;
+}
+
+.scroll-button:hover {
+    background-color: #0056b3;
+}
+select {
+    margin: 0 52px 0 16px;
+    color: #202429;
+    font-size: 16px;
+    line-height: 50px;
+    border-radius: 6px;
+    width: 450px;
+    height: 50px;
+    padding: 10px;
+    border: 1px solid #e6e6e6;
+    background-color: #fff;
+}
+.cart-btn:hover, .wishlist-btn:hover {
+    background-color: #f0f0f0; /* 호버 시 배경색 */
+}
+.qty-btn{
+	border: none;
+    width: 26px;
+    height: 30px;
+    color: #292b2b;
+    background-color: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+.cart-btn, .wishlist-btn {
+    border: 1px solid #e3e5e8 !important;
+    border-radius: 5px; /* 테두리 모서리 둥글게 */
+    padding: 10px; /* 버튼 안의 여백 */
+    background-color: transparent; /* 버튼 배경을 투명하게 */
+    cursor: pointer; /* 마우스를 올리면 포인터 모양으로 변경 */
+    display: inline-flex; /* 버튼 안의 내용이 가로로 배치되도록 */
+    justify-content: center; /* 내용이 가운데로 정렬 */
+    align-items: center; /* 내용이 세로로 정렬 */
+}
+.cart-btn i, .wishlist-btn i {
+    color: #000;
+    font-size: 20px;
+}
+.button-container button {
+    padding: 12px 20px;
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+}
+.original-price{
+	text-decoration: line-through;
+	color: #808893;
+	font-size: 20px;
+}
+#price {
+	display: flex;
+}
+
+.buy-now {
+    background-color: black;
+    color: white;
+}
+div > a {
+	text-decoration: none;
+	color: #333;	
+}
+div > a > i {
+	padding-right: 13px
+} 
+.npay {
+    background-color: #f2a900;
+    color: white;
+}
+#prdDetailBar{
+    display: flex;
+    margin: auto;
+    gap: 290px;
+    font-size: 20px;
+    padding: 20px 17px 20px 525px; 
+    text-align: center;
+    position: sticky;
+    top: 100px;
+    z-index: 1000; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+#prdDetailBar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0; 
+    display: inline-block;
+    margin-right: 20px;
+}
+
+#prdDetailBar li {
+    display: inline;
+}
+
+#detailEp{
+	text-align: center;
+	margin-bottom: 10px;
+}
+#detailEp p {
+	max-width: 800px; 
+    margin: 0 auto;
+}
+#loadMoreBtn {
+    display: block; 
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: white;
+    color: #242729;
+    border: 1px solid #242729;
+    border-radius: 42px;
+    cursor: pointer;
+    width: 43%;
+    height: 44px;
+}
+#detailEp img, #moreItems img {
+    display: block;  
+    margin: 0 auto;
+    margin-bottom: 10px; 
+}
+#selAnthor div p {
+	color: #242729;
+	padding-bottom: 15px;
+	font-size: 24px;
+	padding-top: 20px;
+}
+#selAnthor {
+	margin: 20px auto;
+    width: 46%;
+}
+#selAnthorprd, #pickPrd {
+	display: flex;
+	flex-wrap: wrap;  /* 줄 바꿈 허용 */
+    gap: 20px;
+}
+#pickPrd img{
+    width: calc(33.33% - 10px); /* 3개씩 배치 (여백 고려) */
+    width: 278px;
+    height: 280px;
+    object-fit: cover;
+}
+#selAnthorTitle, #pickTitle, #reviewsTitle, #qaTitle{
+	display: flex;	
+	justify-content: space-between; 
+	border-top: 1px solid #e8e9eb;
+	padding-top: 10px;
+	align-items: center;
+}
+#selAnthorTitle a {
+	align-items: center;
+    display: flex;
+}
+.small-text {
+    font-size: 15px;
+    vertical-align: middle;
+}
+#picks, #reviews, #qa, #selCs{
+    padding-top: 25px;	
+}
+html {
+    scroll-behavior: smooth;
+}
+a {
+    text-decoration: none;
+    color: #242729;
+}
+#qaLogo i{
+    padding-top: 30px;
+    font-size: 34px;
+}
+#qaLogo {
+	text-align: center;
+}
+#qaConment {
+	text-align: center;	
+}
+.cmTitle {
+	font-size: 17px;
+    font-weight: 800;
+    color: #4f5558;
+}
+.cmcomend {
+	padding-top: 12px !important;
+    font-size: 16px !important;
+} 
+.qaBtn{
+	min-width: 236px;
+    background-color: black;
+    color: white;
+    height: 48px;
+    border-radius: 24px;
+    border: 0px;
+    cursor: pointer;
+    font-size: 18px;
+    padding-bottom: 5px;
+}
+#selCsTitle{
+	border-top: 1px solid #e8e9eb;
+    padding-top: 10px;
+    font-size: 24px;
+}
+.tie {
+	max-width: 120px;
+    width: 81%;
+    color: #828a8f;	
+}
+#total-price {
+    background-color: transparent !important; 
+}
+#price-text {
+	font-size: 23px;
+	color: #f2a900;
+}
+.buy-total {
+ 	font-size: 23px;	
+}
+
+.heart {
+	color: #f2a900 !important;
+}
+
+.heart2 {
+	position: absolute;
+    cursor: pointer;
+    right: 10px;
+    bottom: 10px;
+    font-size: 32px;
+    z-index: 10;
+    color: #f2a900;
+}
+
+.prdImg-div {
+	position: relative;
+}
+
+#prdCt p img {
+  max-width: 800px;
+}

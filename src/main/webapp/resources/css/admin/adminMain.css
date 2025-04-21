@@ -1,0 +1,20 @@
+@charset "UTF-8";
+
+#content {
+	height: 834px;
+}
+
+.card-header {
+	display: flex;
+	justify-content: space-between;
+}
+
+#report-link {
+	text-decoration: none;
+	color: #292b2b;
+	font-size: 14px;
+}
+
+.card-body {
+	display: flex;
+}
