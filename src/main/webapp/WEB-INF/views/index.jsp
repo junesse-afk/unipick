@@ -27,7 +27,7 @@
 <link rel="icon" href="${pageContext.request.contextPath }/resources/images/favicon.png">
 
 
-<title>UNIPICK</title>
+<title>UNIPICKs</title>
 </head>
 <body>
 	<div id="topNav">
